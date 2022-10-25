@@ -113,7 +113,23 @@ Pascal.of(5)
 ```
 
 ```elixir
+defmodule Pascal do
+  def of(n), do: 1..n |> Enum.map(fn row_num -> row(row_num) end)
 
+  defp row(1), do: [1]
+  defp row(2), do: [1, 1]
+
+  defp row(n) do
+    body =
+      row(n - 1)
+      |> Enum.chunk_every(2, 1, :discard)
+      |> Enum.map(fn [a, b] -> a + b end)
+
+    [1] ++ body ++ [1]
+  end
+end
+
+Pascal.of(5)
 ```
 
 ## Commit Your Progress
