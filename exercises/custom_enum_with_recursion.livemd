@@ -5,7 +5,6 @@ Mix.install([
   {:youtube, github: "brooklinjazz/youtube"},
   {:hidden_cell, github: "brooklinjazz/hidden_cell"},
   {:tested_cell, github: "brooklinjazz/tested_cell"},
-  {:utils, path: "#{__DIR__}/../utils"},
   {:benchee, "~> 1.1"}
 ])
 ```
@@ -142,12 +141,17 @@ Benchmark your solution against the existing [Enum](https://hexdocs.pm/elixir/En
 Run the following in your command line from the beta_curriculum folder to track and save your progress in a Git commit.
 
 ```
+$ git checkout main
+$ git checkout -b exercise-custom_enum_with_recursion
 $ git add .
 $ git commit -m "finish custom enum with recursion exercise"
+$ git push origin exercise-custom_enum_with_recursion
 ```
+
+Then create a pull request to your `main` branch and notify your teacher by including `@BrooklinJazz` in your PR description to get feedback.
 
 ## Up Next
 
-| Previous                                           | Next                                                         |
-| -------------------------------------------------- | -----------------------------------------------------------: |
-| [Big O Notation](../reading/big_o_notation.livemd) | [Games Benchmarking](../exercises/games_benchmarking.livemd) |
+| Previous                                                     | Next                                 |
+| ------------------------------------------------------------ | -----------------------------------: |
+| [Games Benchmarking](../exercises/games_benchmarking.livemd) | [Streams](../reading/streams.livemd) |

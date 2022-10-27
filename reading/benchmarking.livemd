@@ -5,8 +5,7 @@ Mix.install([
   {:youtube, github: "brooklinjazz/youtube"},
   {:hidden_cell, github: "brooklinjazz/hidden_cell"},
   {:tested_cell, github: "brooklinjazz/tested_cell"},
-  {:benchee, "~> 1.1"},
-  {:utils, path: "#{__DIR__}/../utils"}
+  {:benchee, "~> 1.1"}
 ])
 ```
 
@@ -307,12 +306,17 @@ This is especially useful for benchmarking how larger data affects our system. I
 Run the following in your command line from the beta_curriculum folder to track and save your progress in a Git commit.
 
 ```
+$ git checkout main
+$ git checkout -b exercise-benchmarking
 $ git add .
 $ git commit -m "finish benchmarking section"
+$ git push origin exercise-benchmarking
 ```
+
+Then create a pull request to your `main` branch and notify your teacher by including `@BrooklinJazz` in your PR description to get feedback.
 
 ## Up Next
 
-| Previous                                                 | Next                                               |
-| -------------------------------------------------------- | -------------------------------------------------: |
-| [Computer Hardware](../reading/computer_hardware.livemd) | [Big O Notation](../reading/big_o_notation.livemd) |
+| Previous                                           | Next                                                         |
+| -------------------------------------------------- | -----------------------------------------------------------: |
+| [Big O Notation](../reading/big_o_notation.livemd) | [Games Benchmarking](../exercises/games_benchmarking.livemd) |
