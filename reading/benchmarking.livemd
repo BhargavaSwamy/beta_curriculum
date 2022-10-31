@@ -81,6 +81,8 @@ Passing the function directly.
 
 ```elixir
 slow_function = fn -> Process.sleep(1000) end
+{time, _result} = :timer.tc(fn -> slow_function.() end)
+{"Seconds", time / 1000_000}
 ```
 
 ### Your Turn
@@ -110,6 +112,9 @@ defmodule MyModule do
     Process.sleep(1000)
   end
 end
+
+{time, _result} = :timer.tc(fn -> MyModule.slow_function() end)
+{"Seconds", time / 1000_000}
 ```
 
 ## Benchee
@@ -246,8 +251,8 @@ You should notice the list is faster this time, or at least close to the same sp
 
 ```elixir
 Benchee.run(%{
-  "access first element in list" => fn -> nil end,
-  "access first element in tuple" => fn -> nil end
+  "access first element in list" => fn -> Enum.at(large_list, 0) end,
+  "access first element in tuple" => fn -> elem(large_tuple, 0) end
 })
 ```
 

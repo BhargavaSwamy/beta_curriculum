@@ -147,7 +147,9 @@ In the Elixir cell below, use the `:timer.tc/1` function to time how long it tak
 `50000` elements. Then do the same for tuples.
 
 ```elixir
-
+large_list = 1..50000 |> Enum.map(fn n -> n end)
+{list_time, _result} = :timer.tc(fn -> [100 | large_list] end)
+{"List", list_time}
 ```
 
 ## Accessing
@@ -213,7 +215,10 @@ to access the first element, and last element of a list with `5000` elements.
 Then do the same for tuples.
 
 ```elixir
-
+large_tuple = 1..5000 |> Enum.map(fn n -> n end)
+{list_time_first, _result} = :timer.tc(fn -> Enum.take(large_list, 1) end)
+{list_time_last, _result} = :timer.tc(fn -> Enum.take(large_list, -1) end)
+{"List first", list_time_first, "List Last", list_time_last}
 ```
 
 ## Concatenation
@@ -272,7 +277,11 @@ to concatenate a list with one element and a list with 5000 elements.
 Then try to concatenate a list with 5000 elements to a list with 1 element. Notice how it takes longer.
 
 ```elixir
-
+small_list = [0]
+large_list = 1..5000 |> Enum.map(fn n -> n end)
+{small_big, _result} = :timer.tc(fn -> small_list ++ large_list end)
+{big_small, _result} = :timer.tc(fn -> large_list ++ small_list end)
+{"Small first", small_big, "Big first", big_small}
 ```
 
 ## Updating (Replacing)

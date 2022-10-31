@@ -175,7 +175,7 @@ end
 Implement the `StreamProducts` module using Streams instead of the [Enum](https://hexdocs.pm/elixir/Enum.html) module.
 
 ```elixir
-defmodule StreamProducts do
+defmodule Products do
   @moduledoc """
   Documentation for `Products`
   """
@@ -185,62 +185,183 @@ defmodule StreamProducts do
 
   ## Examples
 
-    No filters returns all products.
+  No filters returns all products.
 
-    iex> Products.filter([%{name: "Laptop", category: :tech, price: 100}], [])
-    [%{name: "Laptop", category: :tech, price: 100}]
+  iex> Products.filter([%{name: "Laptop", category: :tech, price: 100}], [])
+  [%{name: "Laptop", category: :tech, price: 100}]
 
-    Filter by name
+  Filter by name
 
-    iex> Products.filter([%{name: "Laptop", category: :tech, price: 100}], name: "Laptop")
-    [%{name: "Laptop", category: :tech, price: 100}]
+  iex> Products.filter([%{name: "Laptop", category: :tech, price: 100}], name: "Laptop")
+  [%{name: "Laptop", category: :tech, price: 100}]
 
-    iex> Products.filter([%{name: "Laptop", category: :tech, price: 100}], name: "apt")
-    [%{name: "Laptop", category: :tech, price: 100}]
+  iex> Products.filter([%{name: "Laptop", category: :tech, price: 100}], name: "apt")
+  [%{name: "Laptop", category: :tech, price: 100}]
 
-    iex> Products.filter([%{name: "Laptop", category: :tech, price: 100}], name: "APT")
-    [%{name: "Laptop", category: :tech, price: 100}]
+  iex> Products.filter([%{name: "Laptop", category: :tech, price: 100}], name: "APT")
+  [%{name: "Laptop", category: :tech, price: 100}]
 
-    iex> Products.filter([%{name: "Laptop", category: :tech, price: 100}], name: "Phone")
-    []
+  iex> Products.filter([%{name: "Laptop", category: :tech, price: 100}], name: "Phone")
+  []
 
-    Filter by category
+  Filter by category
 
-    iex> Products.filter([%{name: "Laptop", category: :tech, price: 100}], category: :tech)
-    [%{name: "Laptop", category: :tech, price: 100}]
+  iex> Products.filter([%{name: "Laptop", category: :tech, price: 100}], category: :tech)
+  [%{name: "Laptop", category: :tech, price: 100}]
 
-    iex> Products.filter([%{name: "Laptop", category: :tech, price: 100}], category: :health)
-    []
+  iex> Products.filter([%{name: "Laptop", category: :tech, price: 100}], category: :health)
+  []
 
-    Filter by min price.
+  Filter by min price.
 
-    iex> Products.filter([%{name: "Laptop", category: :tech, price: 100}], min: 100)
-    [%{name: "Laptop", category: :tech, price: 100}]
+  iex> Products.filter([%{name: "Laptop", category: :tech, price: 100}], min: 100)
+  [%{name: "Laptop", category: :tech, price: 100}]
 
-    iex> Products.filter([%{name: "Laptop", category: :tech, price: 100}], min: 50)
-    [%{name: "Laptop", category: :tech, price: 100}]
+  iex> Products.filter([%{name: "Laptop", category: :tech, price: 100}], min: 50)
+  [%{name: "Laptop", category: :tech, price: 100}]
 
-    iex> Products.filter([%{name: "Laptop", category: :tech, price: 100}], min: 200)
-    []
+  iex> Products.filter([%{name: "Laptop", category: :tech, price: 100}], min: 200)
+  []
 
-    Filter by max price.
+  Filter by max price.
 
-    iex> Products.filter([%{name: "Laptop", category: :tech, price: 100}], max: 100)
-    [%{name: "Laptop", category: :tech, price: 100}]
+  iex> Products.filter([%{name: "Laptop", category: :tech, price: 100}], max: 100)
+  [%{name: "Laptop", category: :tech, price: 100}]
 
-    iex> Products.filter([%{name: "Laptop", category: :tech, price: 100}], max: 200)
-    [%{name: "Laptop", category: :tech, price: 100}]
+  iex> Products.filter([%{name: "Laptop", category: :tech, price: 100}], max: 200)
+  [%{name: "Laptop", category: :tech, price: 100}]
 
-    iex> Products.filter([%{name: "Laptop", category: :tech, price: 100}], max: 50)
-    []
+  iex> Products.filter([%{name: "Laptop", category: :tech, price: 100}], max: 50)
+  []
 
-    Multiple filters.
+  Multiple filters.
 
-    Products.filter([%{name: "Laptop", category: :tech, price: 100}], min: 50, max: 200, name: "Laptop", category: :tech)
+  Products.filter([%{name: "Laptop", category: :tech, price: 100}], min: 50, max: 200, name: "Laptop", category: :tech)
   """
-  def filter(products, filters) do
+  def filter(products, []), do: products
+
+  def filter(products, filter) do
+    products
+    |> Stream.filter(fn product ->
+      Keyword.keys(filter)
+      |> Enum.all?(fn key -> key_match?(product, filter, key) end)
+    end)
+    |> Enum.to_list()
+  end
+
+  defp key_match?(product, filter, _key = :name) do
+    product.name
+    |> String.downcase()
+    |> String.contains?(filter[:name] |> String.downcase())
+  end
+
+  defp key_match?(product, filter, _key = :category), do: product.category == filter[:category]
+  defp key_match?(product, filter, _key = :min), do: product.price >= filter[:min]
+  defp key_match?(product, filter, _key = :max), do: product.price <= filter[:max]
+end
+
+ExUnit.start(auto_run: false)
+
+defmodule ProductsTest do
+  use ExUnit.Case
+
+  test "filter/2 empty filters" do
+    product_list = [
+      %{name: "Laptop", category: :tech, price: 100},
+      %{name: "Cell Phone", category: :tech, price: 500}
+    ]
+
+    filtered_list = Products.filter(product_list, [])
+    assert filtered_list == product_list
+  end
+
+  test "filter/2 by exact matching name" do
+    product_list = [
+      %{name: "Laptop", category: :tech, price: 100},
+      %{name: "Cell Phone", category: :tech, price: 500}
+    ]
+
+    filtered_list = Products.filter(product_list, name: "Laptop")
+    assert filtered_list == [%{name: "Laptop", category: :tech, price: 100}]
+  end
+
+  test "filter/2 by partial matching name" do
+    product_list = [
+      %{name: "Laptop", category: :tech, price: 100},
+      %{name: "Cell Phone", category: :tech, price: 500}
+    ]
+
+    filtered_list = Products.filter(product_list, name: "apt")
+    assert filtered_list == [%{name: "Laptop", category: :tech, price: 100}]
+  end
+
+  test "filter/2 by mixed case partial matching name" do
+    product_list = [
+      %{name: "Laptop", category: :tech, price: 100},
+      %{name: "Cell Phone", category: :tech, price: 500}
+    ]
+
+    filtered_list = Products.filter(product_list, name: "Apt")
+    assert filtered_list == [%{name: "Laptop", category: :tech, price: 100}]
+  end
+
+  test "filter/2 by category" do
+    product_list = [
+      %{name: "Laptop", category: :tech, price: 100},
+      %{name: "Cell Phone", category: :tech, price: 500}
+    ]
+
+    filtered_list = Products.filter(product_list, category: :tech)
+
+    assert filtered_list == [
+             %{name: "Laptop", category: :tech, price: 100},
+             %{name: "Cell Phone", category: :tech, price: 500}
+           ]
+  end
+
+  test "filter/2 by min price" do
+    filtered_list = Products.filter([%{name: "Laptop", category: :tech, price: 100}], min: 100)
+    assert filtered_list == [%{name: "Laptop", category: :tech, price: 100}]
+
+    filtered_list = Products.filter([%{name: "Laptop", category: :tech, price: 100}], min: 50)
+    assert filtered_list == [%{name: "Laptop", category: :tech, price: 100}]
+
+    filtered_list = Products.filter([%{name: "Laptop", category: :tech, price: 100}], min: 200)
+    assert filtered_list == []
+  end
+
+  test "filter/2 by max price" do
+    filtered_list = Products.filter([%{name: "Laptop", category: :tech, price: 100}], max: 100)
+    assert filtered_list == [%{name: "Laptop", category: :tech, price: 100}]
+
+    filtered_list = Products.filter([%{name: "Laptop", category: :tech, price: 100}], max: 200)
+    assert filtered_list == [%{name: "Laptop", category: :tech, price: 100}]
+
+    filtered_list = Products.filter([%{name: "Laptop", category: :tech, price: 100}], max: 50)
+    assert filtered_list == []
+  end
+
+  test "filter/2 by max and min price" do
+    filtered_list =
+      Products.filter([%{name: "Laptop", category: :tech, price: 100}], min: 50, max: 200)
+
+    assert filtered_list == [%{name: "Laptop", category: :tech, price: 100}]
+  end
+
+  test "filter/2 all filters" do
+    filtered_list =
+      Products.filter([%{name: "Laptop", category: :tech, price: 100}],
+        min: 50,
+        max: 200,
+        name: "Laptop",
+        category: :tech
+      )
+
+    assert filtered_list == [%{name: "Laptop", category: :tech, price: 100}]
   end
 end
+
+ExUnit.run()
 ```
 
 ## Bonus: Benchmark
