@@ -19,6 +19,34 @@ Mix.install([
 
 Ensure you type the `ea` keyboard shortcut to evaluate all Elixir cells before starting. Alternatively you can evaluate the Elixir cells as you read.
 
+<!-- livebook:{"break_markdown":true} -->
+
+**State Machine**
+
+```elixir
+defmodule SM do
+  @states %{
+    initial: %{2 => :seenFirstTwo},
+    seenFirstTwo: %{4 => :seenFour},
+    seenFour: %{2 => :seenSecondTwo},
+    seenSecondTwo: %{6 => :open, 4 => :seenFour},
+    open: %{}
+  }
+
+  def numberlock(list_of_num) do
+    final_state =
+      list_of_num
+      |> Enum.reduce(:initial, fn event, current_state ->
+        get_in(@states, [current_state, event]) || :initial
+      end)
+
+    if final_state == :open, do: "Come on in", else: "Bzzt"
+  end
+end
+
+SM.numberlock([2, 4, 9, 2, 4, 2, 6])
+```
+
 ## Overview
 
 Reduce is an incredibly powerful tool you can leverage in a wide variety of circumstances.
