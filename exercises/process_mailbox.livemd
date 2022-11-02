@@ -71,8 +71,19 @@ defmodule Mailbox do
       :ok
   """
   def loop(state \\ []) do
+    IO.inspect(state, label: "Mailbox")
+
+    receive do
+      {:mail, msg} -> loop([msg | state])
+    end
   end
 end
+
+mailbox_process = Process.spawn(fn -> Mailbox.loop() end, [])
+```
+
+```elixir
+send(mailbox_process, {:mail, "You've Got Mail again!"})
 ```
 
 ## Commit Your Progress
