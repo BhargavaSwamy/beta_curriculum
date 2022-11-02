@@ -187,17 +187,17 @@ defmodule Products do
 
   No filters returns all products.
 
-<<<<<<< HEAD
+  <<<<<<< HEAD
   iex> Products.filter([%{name: "Laptop", category: :tech, price: 100}], [])
   [%{name: "Laptop", category: :tech, price: 100}]
-=======
+  =======
     iex> StreamProducts.filter([%{name: "Laptop", category: :tech, price: 100}], [])
     [%{name: "Laptop", category: :tech, price: 100}]
->>>>>>> main
+  >>>>>>> main
 
   Filter by name
 
-<<<<<<< HEAD
+  <<<<<<< HEAD
   iex> Products.filter([%{name: "Laptop", category: :tech, price: 100}], name: "Laptop")
   [%{name: "Laptop", category: :tech, price: 100}]
 
@@ -209,7 +209,7 @@ defmodule Products do
 
   iex> Products.filter([%{name: "Laptop", category: :tech, price: 100}], name: "Phone")
   []
-=======
+  =======
     iex> StreamProducts.filter([%{name: "Laptop", category: :tech, price: 100}], name: "Laptop")
     [%{name: "Laptop", category: :tech, price: 100}]
 
@@ -221,27 +221,27 @@ defmodule Products do
 
     iex> StreamProducts.filter([%{name: "Laptop", category: :tech, price: 100}], name: "Phone")
     []
->>>>>>> main
+  >>>>>>> main
 
   Filter by category
 
-<<<<<<< HEAD
+  <<<<<<< HEAD
   iex> Products.filter([%{name: "Laptop", category: :tech, price: 100}], category: :tech)
   [%{name: "Laptop", category: :tech, price: 100}]
 
   iex> Products.filter([%{name: "Laptop", category: :tech, price: 100}], category: :health)
   []
-=======
+  =======
     iex> StreamProducts.filter([%{name: "Laptop", category: :tech, price: 100}], category: :tech)
     [%{name: "Laptop", category: :tech, price: 100}]
 
     iex> StreamProducts.filter([%{name: "Laptop", category: :tech, price: 100}], category: :health)
     []
->>>>>>> main
+  >>>>>>> main
 
   Filter by min price.
 
-<<<<<<< HEAD
+  <<<<<<< HEAD
   iex> Products.filter([%{name: "Laptop", category: :tech, price: 100}], min: 100)
   [%{name: "Laptop", category: :tech, price: 100}]
 
@@ -250,7 +250,7 @@ defmodule Products do
 
   iex> Products.filter([%{name: "Laptop", category: :tech, price: 100}], min: 200)
   []
-=======
+  =======
     iex> StreamProducts.filter([%{name: "Laptop", category: :tech, price: 100}], min: 100)
     [%{name: "Laptop", category: :tech, price: 100}]
 
@@ -259,11 +259,11 @@ defmodule Products do
 
     iex> StreamProducts.filter([%{name: "Laptop", category: :tech, price: 100}], min: 200)
     []
->>>>>>> main
+  >>>>>>> main
 
   Filter by max price.
 
-<<<<<<< HEAD
+  <<<<<<< HEAD
   iex> Products.filter([%{name: "Laptop", category: :tech, price: 100}], max: 100)
   [%{name: "Laptop", category: :tech, price: 100}]
 
@@ -272,7 +272,7 @@ defmodule Products do
 
   iex> Products.filter([%{name: "Laptop", category: :tech, price: 100}], max: 50)
   []
-=======
+  =======
     iex> StreamProducts.filter([%{name: "Laptop", category: :tech, price: 100}], max: 100)
     [%{name: "Laptop", category: :tech, price: 100}]
 
@@ -281,16 +281,16 @@ defmodule Products do
 
     iex> StreamProducts.filter([%{name: "Laptop", category: :tech, price: 100}], max: 50)
     []
->>>>>>> main
+  >>>>>>> main
 
   Multiple filters.
 
-<<<<<<< HEAD
+  <<<<<<< HEAD
   Products.filter([%{name: "Laptop", category: :tech, price: 100}], min: 50, max: 200, name: "Laptop", category: :tech)
-=======
+  =======
     iex> StreamProducts.filter([%{name: "Laptop", category: :tech, price: 100}], min: 50, max: 200, name: "Laptop", category: :tech)
     [%{name: "Laptop", category: :tech, price: 100}]
->>>>>>> main
+  >>>>>>> main
   """
   def filter(products, []), do: products
 

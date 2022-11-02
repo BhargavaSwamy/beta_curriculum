@@ -44,9 +44,14 @@ defmodule Fibonacci do
 
     iex> 
   """
-  def sequence(length) do
-  end
+  def sequence(length), do: 0..length |> Enum.map(fn n -> of(n) end)
+
+  def of(0), do: 0
+  def of(1), do: 1
+  def of(n), do: IO.inspect(of(n - 1) + of(n - 2))
 end
+
+Fibonacci.sequence(10)
 ```
 
 ## Competition: Benchmark
@@ -56,8 +61,25 @@ In the Elixir cell below, create a `FastFib` module. The `FastFib` module should
 ```elixir
 defmodule FastFib do
   def sequence(length) do
+    0..length
+    |> Enum.reduce(%{}, fn n, acc ->
+      if n in Map.keys(acc) do
+        IO.inspect({"S", n})
+        Map.get(acc, n)
+      else
+        Map.put_new(acc, n, fib(n))
+      end
+    end)
+
+    # |> Enum.map(fn {key, val} -> val end)
   end
+
+  def fib(0), do: 0
+  def fib(1), do: 1
+  def fib(n), do: fib(n - 1) + fib(n - 2)
 end
+
+FastFib.sequence(6)
 ```
 
 Use [Benchee](https://hexdocs.pm/benchee/Benchee.html) to benchmark the performance of `FastFib.sequence/1` function. The student in the class with the fastest `FastFib` time wins.

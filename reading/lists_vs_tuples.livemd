@@ -251,7 +251,7 @@ to access the first element, and last element of a list with `5000` elements.
 Then do the same for tuples.
 
 ```elixir
-large_tuple = 1..5000 |> Enum.map(fn n -> n end)
+large_tuple = 1..5000 |> Enum.reduce({}, fn n, acc -> Tuple.append(acc, n) end)
 {list_time_first, _result} = :timer.tc(fn -> Enum.take(large_list, 1) end)
 {list_time_last, _result} = :timer.tc(fn -> Enum.take(large_list, -1) end)
 {"List first", list_time_first, "List Last", list_time_last}
@@ -357,7 +357,6 @@ Let's compare the time it takes to update the first element of a list and tuple 
 ```elixir
 {tuple_time, _result} = :timer.tc(fn -> put_elem(large_tuple, 0, 7) end)
 {list_time, _result} = :timer.tc(fn -> List.replace_at(large_list, 0, 7) end)
-
 %{tuple: tuple_time, list: list_time}
 ```
 
@@ -366,7 +365,7 @@ the last element of a list and tuple of equal size.
 
 ```elixir
 {tuple_time, _result} = :timer.tc(fn -> put_elem(large_tuple, 9_999_999, 7) end)
-{list_time, _result} = :timer.tc(fn -> List.replace_at(large_list, 9_999_999, 7) end)
+# {list_time, _result} = :timer.tc(fn -> List.replace_at(large_list, 9_999_999, 7) end)
 
 %{tuple: tuple_time, list: list_time}
 ```
