@@ -191,7 +191,7 @@ Spawn a linked process and crash this Elixir cell below.
 Comment out your solution when complete to avoid continuously crashing the livebook!
 
 ```elixir
-
+# pid = spawn_link(fn -> raise "opps" end)
 ```
 
 ## Message Passing
@@ -237,7 +237,21 @@ In the Elixir cell below, spawn a new process and send it a message `{:hello, "w
 `IO.puts` the message's payload where `"world"` is the payload.
 
 ```elixir
+childpid =
+  spawn(fn ->
+    receive do
+      {parentpid, :hello, payload} -> send(parentpid, "[#{payload}] returned by child.")
+    end
+  end)
+```
 
+```elixir
+parentpid = self()
+send(childpid, {parentpid, :hello, "Message from parent."}) |> IO.inspect()
+
+receive do
+  message -> IO.puts(message)
+end
 ```
 
 ## State
@@ -312,6 +326,7 @@ defmodule CounterProcess do
 
     receive do
       :increment -> loop(state + 1)
+      :decrement -> loop(state - 1)
     end
   end
 end
@@ -324,6 +339,7 @@ We now have stateful processes!
 
 ```elixir
 send(counter_process, :increment)
+# send(counter_process, :decrement)
 ```
 
 Stateful processes are short-term in-memory persistence. We can create a stateful process
@@ -337,22 +353,82 @@ Modify the `Counter` module below so it can receive a `:decrement` message to de
 
 ```elixir
 defmodule Counter do
-  def loop(state \\ 0) do
+  def loop(state \\ 10) do
     IO.inspect(state, label: "counter")
 
     receive do
       :increment -> loop(state + 1)
+      :decrement -> loop(state - 1)
     end
   end
 end
 
-counter_process = spawn(fn -> CounterProcess.loop() end)
+counter_process = spawn(fn -> Counter.loop() end)
 ```
 
 You should be able to send a `:decrement` message to a spawned `Counter`. Uncomment and evaluate the code below to test your solution.
 
 ```elixir
-# send(counter_process, :decrement)
+send(counter_process, :decrement)
+```
+
+```elixir
+# Child process
+defmodule Names do
+  def class(state \\ []) do
+    IO.inspect(state, lable: "Class")
+
+    receive do
+      {:add, name} -> class([name | state])
+    end
+  end
+end
+
+names_pid = spawn(fn -> Names.class() end)
+```
+
+```elixir
+send(names_pid, {:add, "Peppa Pig"})
+```
+
+```elixir
+defmodule TakeANumber do
+  def start(), do: spawn(fn -> counter() end)
+
+  defp counter(state \\ 0) do
+    # IO.inspect(state, label: "Count")
+    receive do
+      {:report_state, sender_pid} ->
+        send(sender_pid, "Count: #{state}")
+        counter(state)
+    end
+  end
+end
+```
+
+```elixir
+childpid = TakeANumber.start()
+send(childpid, {:report_state, self()})
+
+receive do
+  msg -> msg
+end
+```
+
+```elixir
+defmodule Expensive do
+  def fib(0), do: 0
+  def fib(1), do: 1
+  def fib(n), do: fib(n - 1) + fib(n - 2)
+
+  # Serial execution - Takes about 1 sec per calc  to complete
+  Enum.map(1..200, fn n -> IO.puts("Count #{n} : Fib40 = #{Expensive.fib(40)}") end)
+
+  # Parallel execution  
+  # Enum.map(1..200, fn n -> spawn( fn -> IO.puts IO.puts "Count #{n} : Fib40 = #{Expensive.fib(40)}" end) end)
+end
+
+# 
 ```
 
 ## Commit Your Progress
