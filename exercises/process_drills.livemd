@@ -92,7 +92,7 @@ childpid =
 Process.send(childpid, {:message, "value"}, [])
 ```
 
-Use `Process.spawn` to spawn a process that raises an error. Notice it does not crash the Livebook, because it is an **unlinked** process.
+Use [Process.spawn/2](https://hexdocs.pm/elixir/Process.html#spawn/2) to spawn a process that raises an error. Notice it does not crash the Livebook, because it is an **unlinked** process.
 
 ```elixir
 Process.spawn(fn -> raise "Error" end, [])
@@ -113,10 +113,6 @@ Process.spawn(
 ```
 
 ## Process.alive?/1
-
-```elixir
-
-```
 
 Use [Process.spawn/2](https://hexdocs.pm/elixir/Process.html#spawn/2) and [Process.sleep/1](https://hexdocs.pm/elixir/Process.html#sleep/1) to spawn a process that sleeps for five seconds. Use [Process.alive?/1](https://hexdocs.pm/elixir/Process.html#alive?/1) and [Process.sleep/1](https://hexdocs.pm/elixir/Process.html#sleep/1) to check if the process is alive after two seconds. [Process.alive?/1](https://hexdocs.pm/elixir/Process.html#alive?/1) should return `true`.
 
@@ -193,7 +189,7 @@ childpid = spawn(fn -> raise "error" end)
 
 ## Commit Your Progress
 
-Run the following in your command line from the beta_curriculum folder to track and save your progress in a Git commit.
+Run the following in your command line from the curriculum folder to track and save your progress in a Git commit.
 Ensure that you do not already have undesired or unrelated changes by running `git status` or by checking the source control tab in Visual Studio Code.
 
 ```
@@ -204,7 +200,11 @@ $ git commit -m "finish process drills exercise"
 $ git push origin exercise-process_drills
 ```
 
-Then create a pull request to your `main` branch and notify your teacher by including `@BrooklinJazz` in your PR description to get feedback.
+**DockYard Academy Students Only:**
+
+Create a pull request to your forked `main` branch and notify your teacher by including `@BrooklinJazz` in your PR description to get feedback.
+
+If you are interested in joining the next academy cohort, [sign up here](https://academy.dockyard.com/) to receive more news when it is available.
 
 ## Up Next
 
