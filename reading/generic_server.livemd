@@ -306,11 +306,6 @@ note_book = GenericServer.start(NoteBook)
 {:ok, ["new note 1", "new note 2"]} = GenericServer.call(note_book, {:add_note, "new note 2"})
 ```
 
-```elixir
-defmodule NoteBook do
-end
-```
-
 ## GenServer
 
 It's useful to build your own generic server for the purpose of understanding how they work.
@@ -446,7 +441,24 @@ end
 </details>
 
 ```elixir
+defmodule Journal do
+  # Server Functions
+  @impl true
+  def init(initial_state), do: {:ok, initial_state}
 
+  @impl true
+  def handle_call({:add_entry, entry}, _from, state),
+    do: {:reply, _response = [entry | state], _newstate = [entry | state]}
+
+  # Client Functions 
+  def start(default \\ []), do: GenServer.start_link(__MODULE__, default)
+
+  def add_entry(pid, entry), do: GenServer.call(pid, {:add_entry, entry})
+end
+
+{:ok, pid} = Journal.start()
+Journal.add_entry(pid, "First entry")
+Journal.add_entry(pid, "Second entry")
 ```
 
 ## Client / Server APIs

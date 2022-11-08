@@ -129,8 +129,7 @@ defmodule TrafficLightServer do
       iex> TrafficLightServer.start_link([])
       {:ok, pid}
   """
-  def start_link(opts) do
-  end
+  def start_link(initial_state \\ :green), do: GenServer.start_link(__MODULE__, initial_state)
 
   @doc """
   Transition the `TrafficLightServer`'s state.
@@ -145,8 +144,7 @@ defmodule TrafficLightServer do
       iex> TrafficLightServer.transition(pid)
       :green
   """
-  def transition(pid) do
-  end
+  def transition(pid), do: GenServer.call(pid, :transition)
 
   @doc """
   Get the `TrafficLightServer`'s current state.
@@ -157,9 +155,23 @@ defmodule TrafficLightServer do
       iex> TrafficLightServer.current_light(pid)
       :green
   """
-  def current_light(pid) do
-  end
+  def current_light(pid), do: GenServer.call(pid, :current_light)
+
+  # Server Functions 
+  def init(_opts), do: {:ok, :green}
+
+  def handle_call(:transition, _from, _state = :green), do: {:reply, :yellow, :yellow}
+  def handle_call(:transition, _from, _state = :yellow), do: {:reply, :red, :red}
+  def handle_call(:transition, _from, _state = :red), do: {:reply, :green, :green}
+
+  def handle_call(:current_light, _from, colour), do: {:reply, colour, colour}
 end
+
+{:ok, pid} = TrafficLightServer.start_link([])
+TrafficLightServer.current_light(pid)
+TrafficLightServer.transition(pid)
+TrafficLightServer.transition(pid)
+TrafficLightServer.transition(pid)
 ```
 
 ## Bonus: TrafficGrid
