@@ -415,22 +415,6 @@ receive do
 end
 ```
 
-```elixir
-defmodule Expensive do
-  def fib(0), do: 0
-  def fib(1), do: 1
-  def fib(n), do: fib(n - 1) + fib(n - 2)
-
-  # Serial execution - Takes about 1 sec per calc  to complete
-  Enum.map(1..200, fn n -> IO.puts("Count #{n} : Fib40 = #{Expensive.fib(40)}") end)
-
-  # Parallel execution  
-  # Enum.map(1..200, fn n -> spawn( fn -> IO.puts IO.puts "Count #{n} : Fib40 = #{Expensive.fib(40)}" end) end)
-end
-
-# 
-```
-
 ## Commit Your Progress
 
 Run the following in your command line from the curriculum folder to track and save your progress in a Git commit.

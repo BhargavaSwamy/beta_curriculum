@@ -155,14 +155,15 @@ defmodule Pokemon do
   """
   use GenServer
 
+  defstruct [:name, :type, health: 20, attack: 5]
+
   @doc """
   Start the Pokemon GenServer.
 
   ## Examples
       iex> {:ok, pokemon} = Pokemon.start_link([pokemon: %Pokemon{name: "Charmander", type: :fire}])
   """
-  def start_link(opts \\ []) do
-  end
+  def start_link(pokemon: initial_state), do: GenServer.start_link(__MODULE__, initial_state)
 
   @doc """
   Apply the attacker's attack damage to the defender's health.
@@ -204,9 +205,47 @@ defmodule Pokemon do
       iex> Pokemon.attack(attacker, defender)
       %Pokemon{name: "Bulbasaur2", type: :grass, health: 25, attack: 5}
   """
-  def attack(attacker, defender) do
+  def attack(attackerpid, defenderpid) do
+    attacker_pokemon = GenServer.call(attackerpid, :get)
+    GenServer.call(defenderpid, {:attack, attacker_pokemon})
+  end
+
+  # Server Functions 
+  def init(initial_state), do: {:ok, initial_state}
+
+  def handle_call(:get, _from, state), do: {:reply, state, state}
+
+  def handle_call(
+        {:attack, attacker_pokemon = %Pokemon{attack: attack}},
+        _from,
+        defender_pokemon = %Pokemon{health: health}
+      ) do
+    attack_multiple = calc_attack_multiple(attacker_pokemon, defender_pokemon)
+    new_defender_pokemon = %{defender_pokemon | health: health - attack * attack_multiple}
+    {:reply, _response = new_defender_pokemon, _newstate = new_defender_pokemon}
+  end
+
+  defp calc_attack_multiple(
+         _attacker_pokemon = %Pokemon{type: atype},
+         _defender_pokemon = %Pokemon{type: dtype}
+       ) do
+    cond do
+      atype == dtype -> 1
+      {atype, dtype} in [{:fire, :grass}, {:grass, :water}, {:water, :fire}] -> 2
+      {atype, dtype} in [{:fire, :water}, {:grass, :fire}, {:water, :grass}] -> 0.5
+    end
   end
 end
+```
+
+```elixir
+{:ok, attackerpid} =
+  Pokemon.start_link(pokemon: %Pokemon{name: "Bulbasaur1", type: :grass, attack: 20})
+
+{:ok, defenderpid} =
+  Pokemon.start_link(pokemon: %Pokemon{name: "Bulbasaur2", type: :grass, health: 45})
+
+Pokemon.attack(attackerpid, defenderpid)
 ```
 
 ## Commit Your Progress
