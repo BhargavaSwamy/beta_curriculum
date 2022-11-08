@@ -155,13 +155,24 @@ defmodule Pokemon do
   """
   use GenServer
 
+  defstruct [:name, :type, health: 20, attack: 5]
+
   @doc """
   Start the Pokemon GenServer.
 
   ## Examples
       iex> {:ok, pokemon} = Pokemon.start_link([pokemon: %Pokemon{name: "Charmander", type: :fire}])
   """
+  @impl true
+  def init(state) do
+    {:ok, state}
+  end
+
+  def handle_call() do
+  end
+
   def start_link(opts \\ []) do
+    GenServer.start_link(__MODULE__, :ok, opts)
   end
 
   @doc """
@@ -207,6 +218,10 @@ defmodule Pokemon do
   def attack(attacker, defender) do
   end
 end
+```
+
+```elixir
+Pokemon.start_link(pokemon: %Pokemon{name: "Charmander", type: :fire})
 ```
 
 ## Commit Your Progress
