@@ -85,8 +85,7 @@ defmodule ScoreTracker do
 
     iex> {:ok, pid} = ScoreTracker.start_link([])
   """
-  def start_link(_opts) do
-  end
+  def start_link(initial_state \\ 0), do: GenServer.start_link(__MODULE__, initial_state)
 
   @doc """
   Asynchronously increase the stored score by the specified amount.
@@ -97,8 +96,7 @@ defmodule ScoreTracker do
       iex> ScoreTracker.score(pid, 10)
       :ok
   """
-  def score(score_tracker_pid, amount) do
-  end
+  def score(score_tracker_pid, amount), do: GenServer.cast(score_tracker_pid, {:score, amount})
 
   @doc """
   Synchronously return the current score state.
@@ -109,9 +107,20 @@ defmodule ScoreTracker do
       iex> ScoreTracker.get_score(pid)
       0
   """
-  def get_score(score_tracker_pid) do
-  end
+  def get_score(score_tracker_pid), do: GenServer.call(score_tracker_pid, :get_score)
+
+  # Server Functions 
+  def init(initial_state), do: {:ok, initial_state}
+
+  def handle_cast({:score, amount}, state), do: {:noreply, state + amount}
+
+  def handle_call(:get_score, _from, state), do: {:reply, state, state}
 end
+
+{:ok, pid} = ScoreTracker.start_link()
+ScoreTracker.score(pid, 100)
+ScoreTracker.score(pid, 20)
+ScoreTracker.get_score(pid)
 ```
 
 ## Bonus: Multiplayer Score Tracker

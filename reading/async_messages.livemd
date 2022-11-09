@@ -126,7 +126,24 @@ end
 </details>
 
 ```elixir
+defmodule Journal do
+  use GenServer
 
+  # Client functions 
+  def start_link(initial_state \\ []), do: GenServer.start_link(__MODULE__, initial_state)
+  def add_entry(pid, entry), do: GenServer.cast(pid, {:add_entry, entry})
+
+  # Server functions 
+  def init(initial_state), do: {:ok, initial_state}
+  def handle_cast({:add_entry, entry}, state), do: {:noreply, [entry | state]}
+end
+```
+
+```elixir
+{:ok, journal_pid} = Journal.start_link()
+Journal.add_entry(journal_pid, "First Entry")
+Journal.add_entry(journal_pid, "Second Entry")
+:sys.get_state(journal_pid)
 ```
 
 ## Process
@@ -285,7 +302,31 @@ end
 </details>
 
 ```elixir
+defmodule DecrementingCounter do
+  use GenServer
 
+  # Client functions 
+  def start_link(initial_state \\ 100), do: GenServer.start_link(__MODULE__, initial_state)
+
+  # Server functions 
+  def init(initial_state) do
+    wait()
+    {:ok, initial_state}
+  end
+
+  def handle_info(:decrement, state) do
+    wait()
+    {:noreply, state - 1}
+  end
+
+  defp wait(), do: Process.send_after(self(), :decrement, 500)
+end
+
+{:ok, pid} = DecrementingCounter.start_link()
+```
+
+```elixir
+:sys.get_state(pid)
 ```
 
 ## Thought Provoking Questions

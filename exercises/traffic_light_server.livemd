@@ -158,7 +158,7 @@ defmodule TrafficLightServer do
   def current_light(pid), do: GenServer.call(pid, :current_light)
 
   # Server Functions 
-  def init(_opts), do: {:ok, :green}
+  def init(initial_state), do: {:ok, initial_state}
 
   def handle_call(:transition, _from, _state = :green), do: {:reply, :yellow, :yellow}
   def handle_call(:transition, _from, _state = :yellow), do: {:reply, :red, :red}
