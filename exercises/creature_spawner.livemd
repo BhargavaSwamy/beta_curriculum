@@ -112,7 +112,8 @@ defmodule Monster do
   """
   def start_link(opts) do
     # IO.inspect/2 to observe when a `Monster` process starts.
-    IO.inspect(opts, label: "Monster Started")
+    name = Keyword.get(opts, :name, __MODULE__)
+    IO.inspect(opts, label: "Monster Started", name: name)
   end
 
   @doc """

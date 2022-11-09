@@ -23,7 +23,8 @@ defmodule Stack do
   use GenServer
 
   def start_link(opts) do
-    GenServer.start_link(__MODULE__, [], name: __MODULE__)
+    IO.inspect("Restarting Stack Process")
+    GenServer.start_link(__MODULE__, [], name: :stack_gen_server)
   end
 
   @impl true
@@ -50,16 +51,16 @@ We're able to push and pop elements off of the stack.
 ```elixir
 {:ok, stack_pid} = GenServer.start_link(Stack, [])
 
-GenServer.call(stack_pid, {:push, 1}) |> IO.inspect(label: "push")
-GenServer.call(stack_pid, {:push, 2}) |> IO.inspect(label: "push")
-GenServer.call(stack_pid, {:push, 3}) |> IO.inspect(label: "push")
+# GenServer.call(stack_pid, {:push, 1}) |> IO.inspect(label: "push")
+# GenServer.call(stack_pid, {:push, 2}) |> IO.inspect(label: "push")
+# GenServer.call(stack_pid, {:push, 3}) |> IO.inspect(label: "push")
 
-GenServer.call(stack_pid, :pop) |> IO.inspect(label: "pop")
-GenServer.call(stack_pid, :pop) |> IO.inspect(label: "pop")
-GenServer.call(stack_pid, :pop) |> IO.inspect(label: "pop")
+# GenServer.call(stack_pid, :pop) |> IO.inspect(label: "pop")
+# GenServer.call(stack_pid, :pop) |> IO.inspect(label: "pop")
+# GenServer.call(stack_pid, :pop) |> IO.inspect(label: "pop")
 
 # the final state is empty.
-:sys.get_state(stack_pid)
+# :sys.get_state(stack_pid)
 ```
 
 However, there's a bug. If we try to `pop/1` an item off of an empty stack, the process
@@ -102,7 +103,14 @@ children = [
 Keep in mind, if you have already started a supervisor with the `Stack` process, your livebook may crash. You can resolve this issue by simply re-running the cell below to start the supervisor again.
 
 ```elixir
+children = [
+  %{
+    id: :pop_supervisor,
+    start: {Stack, :start_link, [[]]}
+  }
+]
 
+{:ok, supervisor_pid} = Supervisor.start_link(children, strategy: :one_for_one, max_restarts: 5)
 ```
 
 You should be able to send a `:pop` message to the `Stack` process and the [Supervisor](https://hexdocs.pm/elixir/Supervisor.html) will restart the `Stack` process.
@@ -110,7 +118,8 @@ You should be able to send a `:pop` message to the `Stack` process and the [Supe
 Uncomment and evaluate the code below to test your supervisor.
 
 ```elixir
-# GenServer.call(Stack, :pop)
+# GenServer.call(:stack_gen_server, :pop)
+:sys.get_state(:stack_gen_server)
 ```
 
 ## Commit Your Progress
